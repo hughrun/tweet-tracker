@@ -1,0 +1,55 @@
+/* CSS declarations go here */
+body { 
+	font: Helvetica;
+    background-color: #3286c1;
+    color: #fff;
+    }
+
+h1, h2, h3, h4, h5, h6 {
+	text-align: center;
+}
+
+h2 {
+	color: #fdff92;
+}
+
+a {
+	color: #3286c1;
+	text-decoration: none;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #fdff92;
+    stroke-width: 2;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+	fill: #fdff92;
+}
+
+.wrapper {
+	float: left;
+	padding: 2em;
+	margin: auto;
+}
+
+.module {
+	width: 330px;
+	float: left;
+	margin-right: 60px;
+}
+
+li {
+	margin: 1em 0 0 0;
+}
+
+.username {
+	background-color: #fdff92;
+	border: 1px solid #fdff92;
+	border-radius: 5px;
+	padding: 5px;
+	color: #3286c1;
+	margin: 0 0 1em 0;
+}

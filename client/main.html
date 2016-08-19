@@ -1,0 +1,44 @@
+<head>
+  <link rel="icon" sizes="16x16 32x32" href="/favicon.ico?v=2">
+  <title>tweet tracker by Hugh Rundle</title>
+</head>
+
+<body>
+  <div class="wrapper">
+  <h2>Tweets about 'javascript'</h2>
+  {{> retweets}}  
+  {{> chart}}
+  {{> chatty}}  
+</div>
+</body>
+
+<template name="chart">
+  <div class="module"> 
+    <h3>Total tweets: {{totalTweets}}</h3>
+    <div id="line-chart"></div>
+  </div>
+</template>
+
+<template name="retweets">
+
+<div class="module" id="retweeted"> 
+  <h3>Wisest/Snarkiest:</h3>
+    <ol>
+    {{#each topTweet}}
+      <li><div class="username"><a href="https://twitter.com/{{original_tweet.user.screen_name}}">@{{original_tweet.user.screen_name}}</a></div>
+        <div class="tweet">{{original_tweet.text}}</div></li>
+    {{/each}}
+    </ol>
+</div> 
+</template>
+
+<template name="chatty">
+<div class="module">    
+  <h3>Most Chatty:</h3>
+   <ol>
+    {{#each topTweeters}}
+      <li><span class="username"><a href="https://twitter.com/{{username}}">@{{username}}</a></span> : <b>{{tweets}}</b></li>
+    {{/each}}
+  </ol>
+</div>    
+</template>
