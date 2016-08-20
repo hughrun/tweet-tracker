@@ -1,15 +1,17 @@
 /* CSS declarations go here */
 body { 
-	font: Helvetica;
+	font-family: 'Raleway', sans-serif;
     background-color: #3286c1;
     color: #fff;
     }
 
 h1, h2, h3, h4, h5, h6 {
+	font-size: 2em;
 	text-align: center;
+	font-family: 'Londrina Outline', cursive;
 }
 
-h2 {
+h1, h2 {
 	color: #fdff92;
 }
 
@@ -20,13 +22,13 @@ a {
 .axis path,
 .axis line {
     fill: none;
-    stroke: #fdff92;
+    stroke: #aef5cd;
     stroke-width: 2;
     shape-rendering: crispEdges;
 }
 
 .axis text {
-	fill: #fdff92;
+	fill: #aef5cd;
 }
 
 .wrapper {
@@ -52,4 +54,41 @@ li {
 	padding: 5px;
 	color: #3286c1;
 	margin: 0 0 1em 0;
+}
+
+.retweets {
+	margin: 0 0 1em 0;
+}
+
+.retweets-total {
+	/*background-color: #fdff92;*/
+	border: 1px solid #aef5cd;
+	border-radius: 5px;
+	padding: 5px;
+	color: #aef5cd;
+	margin: 0 0 1em 1em;
+}
+
+.chatty {
+	float: right;
+}
+
+.chatty-user {
+	width: 10em;
+	background-color: #fdff92;
+	border: 1px solid #fdff92;
+	border-radius: 5px;
+	padding: 5px;
+	color: #3286c1;
+	margin: 0 3em 1em 0;
+}
+
+.chatty-total {
+	background-color: #aef5cd;
+	border: 1px solid #aef5cd;
+	border-radius: 5px;
+	padding: 5px;
+	color: #3286c1;
+	margin: 0 3em 1em 0;
+	text-align: center;
 }

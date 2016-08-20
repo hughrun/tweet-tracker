@@ -5,31 +5,38 @@ import twit from 'twit';
 // collections
 
 Tweets = new Mongo.Collection('Tweets');
-Retweets = new Mongo.Collection('Retweets');
-Tweeters = new Mongo.Collection('Tweeters');
 
-// Twitter tokens
+Meteor.startup(() => {
+  // code to run on server at startup
+});
+
+// Twitter tokens (for test account)
 var T = new twit({
-  consumer_key:         '<your key>',
-  consumer_secret:      '<your secret>',
-  access_token:         '<your token>',
-  access_token_secret:  '<your secret token>',
+  consumer_key:         '<consumer key>',
+  consumer_secret:      '<consumer_secret>',
+  access_token:         '<access_token',
+  access_token_secret:  '<access_token_secret>',
   timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests. 
 });
+
+// var stream = T.stream('statuses/filter', {track: ['#national16','#alia16']});
 
 var stream = T.stream('statuses/filter', {track: 'javascript'});
 // use Meteor.bindEnvironment so we don't get fiber errors
 stream.on('tweet', Meteor.bindEnvironment(function(tweet){
-	console.log(tweet.text);
+	var tweetId = tweet.id_str;
+	var time = new Date(tweet.created_at);
+	// insert into Tweets collection
 	Tweets.insert(tweet);
+	// update creation time from string to date object so we can use it to filter
+	Tweets.update({id_str: tweetId}, {$set: {created_at: time}});	
+	
+	// store retweets separately
 	if (tweet.retweeted_status) {
 		var rId = tweet.retweeted_status.id;
 		Retweets.upsert({retweet_id: rId}, {$inc: {total_retweets: 1}, $set: {original_tweet: tweet.retweeted_status}});
 	}
-	// also increment a collection of number of tweets by each user 
-	// so we don't need to do an expensive search over the whole Tweets collection each time
-	Tweeters.upsert({user: tweet.user.id_str}, {$set: {username: tweet.user.screen_name}, $inc: {tweets: 1}});
-	}));
+}));
 
 Meteor.methods({
 	todaysTweets: function(now){

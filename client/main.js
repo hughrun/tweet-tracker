@@ -5,26 +5,76 @@ import './main.html';
 
 // collections
 Tweets = new Mongo.Collection('Tweets');
-Retweets = new Mongo.Collection('Retweets');
-Tweeters = new Mongo.Collection('Tweeters');
 
 Template.retweets.helpers({
-  topTweet(){
-  	var highest = Retweets.find({},{sort: {total_retweets:-1}, limit: 5});
-  	return highest;
-  },
+  topRetweets(){
+  	// get all the tweets sent in the last 24 hours that are retweets
+  	var now = new Date();
+  	var yesterday = new Date(now - 8.64e+7);
+  	// restrict fields to 'retweeted_status' to reduce unnecesary payload
+  	var retweets = Tweets.find({created_at: {$gt: yesterday}, retweeted_status: {$exists: true}});
+  	
+  	// We can't just check the retweeted_status.total_retweets field, because that tells us how many retweets over all time
+  	// Instead what we want is how many times we saw it retweeted in the last 24 hours.
+
+  	var rts = {};
+ 	retweets.forEach(function(t){
+ 		var original = t.retweeted_status.id_str;
+ 		if (rts[original]) {
+ 			rts[original].total++
+ 		} else {
+ 			rts[original] = {id: original, user: t.retweeted_status.user.screen_name, text: t.retweeted_status.text, total: 1};
+ 		}
+ 	});
+ 	// sort by number of retweets
+  	var retweets = _.sortBy(rts, 'total');
+  	// get the last 5 (underscorejs's "_.sortBy" returns them in ascending order)
+  	var topRetweets = retweets.slice(-5);
+  	// flip the array so the highest number of retweets is at the top
+  	topRetweets.reverse();
+  	return topRetweets;
+  }
 });
 
 Template.chatty.helpers({
-  topTweeters(){
-  	var top = Tweeters.find({}, {sort: {tweets:-1}, limit: 5});
-  	return top;
+  topToday(){
+  	// this feels like it must be an expensive way to do this, but it works...
+  	var now = new Date();
+  	var yesterday = new Date(now - 8.64e+7);
+  	// get all the tweets sent in the last 24 hours
+  	// restrict fields to 'user' to reduce unnecesary payload
+  	var todayTweets = Tweets.find({created_at: {$gt: yesterday}}, {fields: {user: 1}});
+  	// crate a new object
+  	var people = {}
+  	// iterate over all the tweets and count up how many were sent by each user
+  	// generally we should use the user's id string because they could change their
+  	// screen name, but this will only be relevant for 24 hours at a time, and it's 
+  	// a pain to go back again to get the current screen name from the id.
+  	todayTweets.forEach(function(x){
+  		var name = x.user.screen_name;
+  		if (people[name]) {
+  			people[name].tweets++
+  		} else {
+  			people[name] = {name: name, tweets: 1};
+  		}
+  	});
+  	// sort by number of tweets
+  	var peeps = _.sortBy(people, 'tweets');
+  	// get the last 10 (underscorejs's "_.sortBy" returns them in ascending order)
+  	var topPeeps = peeps.slice(-10);
+  	// flip the array so the highest number of tweets is at the top
+  	topPeeps.reverse();
+  	return topPeeps;
   }
 });
 
 Template.chart.helpers({
   totalTweets() {
-  	var allTweets = Tweets.find();
+  	var now = new Date();
+  	var yesterday = new Date(now - 8.64e+7);
+  	// get all the tweets sent in the last 24 hours
+  	// restrict fields to 'user' to reduce unnecesary payload
+  	var allTweets = Tweets.find({created_at: {$gt: yesterday}});
   	return allTweets.count();
   }
 });
@@ -61,7 +111,7 @@ Meteor.setInterval(function getTweets() {
 		var xAxis = d3.svg.axis()
 			.scale(x)
 			.orient("bottom")
-			.ticks(4)
+			.ticks(3)
 
 		var yAxis = d3.svg.axis()
 				.scale(y)
