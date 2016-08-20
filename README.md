@@ -11,7 +11,7 @@ It’s fairly simple, and needs a bit of work. So far it tracks the top 10 tweet
 
 ## Screenshot
 
-![ example screenshot](screenshots/image1.png “Example using ‘javascript’”)
+![ example screenshot](tweet-tracker/screenshots/image1.png “Example using ‘javascript’”)
 
 ## License
 MIT
